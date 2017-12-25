@@ -74,7 +74,8 @@ def crnnRec(model,converter,im,text_recs):
        model.eval()
        preds = model(image)
        _, preds = preds.max(2)
-       preds = preds.squeeze(2)
+       # squeezed in preds.max(2) where keepdim=False as default.
+       # preds = preds.squeeze(2)
        preds = preds.transpose(1, 0).contiguous().view(-1)
        preds_size = Variable(torch.IntTensor([preds.size(0)]))
        raw_pred = converter.decode(preds.data, preds_size.data, raw=True)

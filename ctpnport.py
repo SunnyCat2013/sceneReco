@@ -1,6 +1,9 @@
-
+# MUST be imported firstly
 import sys
 import numpy as np
+
+# ROOT = '/home/neoli365/CTPN'
+ROOT = '.'
 class cfg:
     MEAN=np.float32([102.9801, 115.9465, 122.7717])
     TEST_GPU_ID=0
@@ -19,9 +22,10 @@ class cfg:
     TEXT_PROPOSALS_WIDTH=16
 
 def init():
-    sys.path.insert(0, "./CTPN/tools")
-    sys.path.insert(0, "./CTPN/caffe/python")
-    sys.path.insert(0, "./CTPN/src")
+    sys.path.insert(0, ROOT + "/CTPN/tools")
+    sys.path.insert(0, ROOT + "/CTPN/caffe/python")
+    sys.path.insert(0, ROOT + "/CTPN/src")
+
 init()
 
 from other import draw_boxes, resize_im, CaffeModel
@@ -34,18 +38,17 @@ from utils.timer import Timer
 
 def ctpnSource():
     DEMO_IMAGE_DIR = "img/"
-    NET_DEF_FILE = "CTPN/models/deploy.prototxt"
-    MODEL_FILE = "CTPN/models/ctpn_trained_model.caffemodel"
+    NET_DEF_FILE = ROOT + "/CTPN/models/deploy.prototxt"
+    MODEL_FILE = ROOT + "/CTPN/models/ctpn_trained_model.caffemodel"
     caffe.set_mode_gpu()
     caffe.set_device(cfg.TEST_GPU_ID)
     # initialize the detectors
     text_proposals_detector = TextProposalDetector(CaffeModel(NET_DEF_FILE, MODEL_FILE))
-    text_detector = TextDetector(text_proposals_detector)
+    text_detector =TextDetector(text_proposals_detector)
     return text_detector
 
 def getCharBlock(text_detector,im):
     im, f=resize_im(im, cfg.SCALE, cfg.MAX_SCALE)
-    cv2.imshow("src", im)
     tmp = im.copy()
     #timer=Timer()
     #timer.tic()
